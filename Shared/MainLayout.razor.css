@@ -32,6 +32,20 @@ main {
         text-decoration:none;
     }
 
+
+.top-row-left {
+    width: 70%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.top-row-right {
+    width: 30%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
 @media (max-width: 640.98px) {
     .top-row:not(.auth) {
         display: none;

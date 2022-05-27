@@ -1,19 +1,25 @@
 ﻿@page "/boardwrite"
-
+@using SolvaBlazorBoard.Models
+@using SolvaBlazorBoard.Services
 @inject BoardService BoardService
+@inject IAccountService accountService
+@inject NavigationManager navigationManager
+@inject IJSRuntime JsRuntime
 
 <PageTitle>Board Write</PageTitle>
 
 <section style="height:100px;">
-    <p>Title</p>
-    <input class="form-control form-control-lg" type="text" placeholder="Title" aria-label=".form-control-lg example">
+    <h3>Title</h3>
+    <input class="form-control form-control-lg" type="text" @oninput="(e)=>{setTitleValue(e.Value.ToString());}"
+    placeholder="Title" aria-label=".form-control-lg example">
 </section>
 <section style="height:100px;">
-    <p>Tag</p>
-    <input class="form-control form-control-sm" type="text" placeholder="hashtag" aria-label=".form-control-sm example">
+    <h3>Tag</h3>
+    <input class="form-control form-control-sm" type="text" @oninput="(e)=>{setTagValue(e.Value.ToString());}"
+    placeholder="hashtag" aria-label=".form-control-sm example">
 </section>
 <section style="height:300px;">
-    <p>Content</p>
+    <h3>Content</h3>
     <BlazoredTextEditor @ref="@QuillNative" 
                     Placeholder="Leave Your World Here!">
     <ToolbarContent>
@@ -61,13 +67,12 @@
     </ToolbarContent>
 </BlazoredTextEditor>
 </section>
-<section>
-    <button class="btn btn-primary"
+<section style="height:140px; display:flex;justify-content:flex-end;align-items:flex-end">
+        <button class="btn btn-primary"
             @onclick="BoardRegister">
             Register
-    </button>
+        </button>
 </section>
-
 
 <section style="height:100px; display:none;">
     <button class="btn btn-primary"
@@ -98,7 +103,11 @@
 
 
 @code {
+
     BlazoredTextEditor QuillNative;
+
+    string Title = string.Empty;
+    string Tag = string.Empty;
 
     string QuillHTMLContent;
     string QuillContent;
@@ -107,13 +116,35 @@
 
     bool mode = false;
 
-    public async void BoardRegister()
+    private void setTitleValue(string value)
     {
-        
+        Title = value;
+    }
+    private void setTagValue(string value)
+    {
+        Tag = value;
     }
 
 
-    public async void GetHTML()
+    public async void BoardRegister()
+    {
+        TblAgoraBoardMaster boardMaster = new TblAgoraBoardMaster();
+
+        await GetHTML();
+        await GetContent();
+
+        boardMaster.Title = Title;
+        boardMaster.Html = QuillHTMLContent;
+        boardMaster.Date = DateTime.Now;
+        boardMaster.User = accountService.User.Username;
+
+        await BoardService.AddBoardAsync(boardMaster);
+        await JsRuntime.InvokeVoidAsync("alert", "Complete!");
+        navigationManager.NavigateTo("boardwrite");
+    }
+
+
+    public async Task GetHTML()
     {
         QuillHTMLContent = await this.QuillNative.GetHTML();
         StateHasChanged();
@@ -129,7 +160,7 @@
         StateHasChanged();
     }
 
-    public async void GetContent()
+    public async Task GetContent()
     {
         QuillContent = await this.QuillNative.GetContent();
         StateHasChanged();
