@@ -1,0 +1,61 @@
+﻿@page "/board"
+@using Microsoft.AspNetCore.WebUtilities;
+@using System
+@using System.Collections
+@using SolvaBlazorBoard.Models
+@inject BoardService BoardService
+@inject NavigationManager navigationManager
+<PageTitle>Board</PageTitle>
+    <section style="height:100px;width:100%;display:flex;justify-content:center;align-items:center;">
+        <div style="width:50%; display:flex;justify-content:flex-start;align-items:center;">
+            <h3>List</h3>
+        </div>
+        <div style="width:50%; display:flex;justify-content:flex-end;align-items:center;">
+            <button class="btn btn-primary"
+            @onclick="NavigateToBoardWriteComponent">
+            Register
+        </button>
+        </div>
+    </section>
+    @for (var i = 0; i < board.Length; i++)        
+    {
+        <div class="card text-center" style="margin-top:20px;">
+          <div class="card-header">
+            @board[i].User
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">@board[i].Title</h5>
+            <p class="card-text">@markupConverter(@board[i].Html.ToString())</p>
+            <button class="btn btn-primary"
+                @onclick="NavigateToBoardReadComponent">
+                Go Detail
+            </button>
+          </div>
+          <div class="card-footer text-muted">
+            @board[i].Date
+          </div>
+        </div>
+    }
+
+@code {
+
+    private TblAgoraBoardMaster[] board;
+
+    protected override async Task OnInitializedAsync()
+    {    
+        board = await BoardService.GetBoardAsync();
+    }
+    protected MarkupString markupConverter(string target)
+    {
+        MarkupString markup = (MarkupString)target;
+        return markup;
+    }
+    private void NavigateToBoardWriteComponent()
+    {
+        navigationManager.NavigateTo("boardwrite");
+    }
+    private void NavigateToBoardReadComponent()
+    {
+        navigationManager.NavigateTo("boardread");
+    }
+}

@@ -26,6 +26,8 @@ namespace SolvaBlazorBoard.Service
             TblAgoraTagMaster[] tagMasters;
             TblAgoraFileMaster[] fileMasters;
 
+            
+
             boardMasters = (from e in Context.TblAgoraBoardMasters
                         select e).ToArray();
 

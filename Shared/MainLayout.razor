@@ -63,9 +63,9 @@ else
 
 
 @code{
-     public bool LoggedIn
+    public bool LoggedIn
     {
-        get { return accountService.User != null; }
+        get; set;
     }
 
      protected override async Task OnAfterRenderAsync(bool firstRender)

@@ -1,58 +1,62 @@
-﻿@page "/board"
+﻿@page "/chat"
 @using Microsoft.AspNetCore.WebUtilities;
 @using System
 @using System.Collections
 @using SolvaBlazorBoard.Models
-@inject BoardService BoardService
+@inject ChatService ChatService
 @inject NavigationManager navigationManager
-<PageTitle>Board</PageTitle>
-
-    
+<PageTitle>Chat</PageTitle>
+<h3>Chat</h3>
     <section style="height:100px;width:100%;display:flex;justify-content:center;align-items:center;">
         <div style="width:50%; display:flex;justify-content:flex-start;align-items:center;">
             <h3>List</h3>
         </div>
         <div style="width:50%; display:flex;justify-content:flex-end;align-items:center;">
             <button class="btn btn-primary"
-            @onclick="NavigateToBoardComponent">
+            @onclick="NavigateToChatWriteComponent">
             Register
         </button>
         </div>
     </section>
-    @for (var i = 0; i < board.Length; i++)        
+    @for (var i = 0; i < chat.Length; i++)        
     {
         <div class="card text-center" style="margin-top:20px;">
           <div class="card-header">
-            @board[i].User
+            @chat[i].User
           </div>
           <div class="card-body">
-            <h5 class="card-title">@board[i].Title</h5>
-            <p class="card-text">@markupConverter(@board[i].Html.ToString())</p>
-            <a href="#" class="btn btn-primary">Go Detail</a>
+            <h5 class="card-title">@chat[i].User</h5>
+            <p class="card-text">@markupConverter(@chat[i].Content.ToString())</p>
+            <button class="btn btn-primary"
+                @onclick="NavigateToChatReadComponent">
+                Go Detail
+            </button>
           </div>
           <div class="card-footer text-muted">
-            @board[i].Date
+            @chat[i].Date
           </div>
         </div>
     }
 
-@code {
 
-    private TblAgoraBoardMaster[] board;
+@code {
+    private TblAgoraChatMaster[] chat;
 
     protected override async Task OnInitializedAsync()
     {    
-        board = await BoardService.GetBoardAsync();
+        chat = await ChatService.GetChatAsync();
     }
-
-
     protected MarkupString markupConverter(string target)
     {
         MarkupString markup = (MarkupString)target;
         return markup;
     }
-    private void NavigateToBoardComponent()
+    private void NavigateToChatWriteComponent()
     {
-        navigationManager.NavigateTo("boardwrite");
+        navigationManager.NavigateTo("chatwrite");
+    }
+    private void NavigateToChatReadComponent()
+    {
+        navigationManager.NavigateTo("chatread");
     }
 }

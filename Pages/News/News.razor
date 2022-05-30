@@ -1,0 +1,63 @@
+﻿@page "/news"
+@using Microsoft.AspNetCore.WebUtilities;
+@using System
+@using System.Collections
+@using SolvaBlazorBoard.Models
+@inject NewsService NewsService
+@inject NavigationManager navigationManager
+<PageTitle>News</PageTitle>
+<h3>News</h3>
+    <section style="height:100px;width:100%;display:flex;justify-content:center;align-items:center;">
+        <div style="width:50%; display:flex;justify-content:flex-start;align-items:center;">
+            <h3>List</h3>
+        </div>
+        <div style="width:50%; display:flex;justify-content:flex-end;align-items:center;">
+            <button class="btn btn-primary"
+            @onclick="NavigateToNewsWriteComponent">
+            Register
+        </button>
+        </div>
+    </section>
+    @for (var i = 0; i < news.Length; i++)        
+    {
+        <div class="card text-center" style="margin-top:20px;">
+          <div class="card-header">
+            @news[i].User
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">@news[i].Title</h5>
+            <p class="card-text">@markupConverter(@news[i].Html.ToString())</p>
+            <button class="btn btn-primary"
+                @onclick="NavigateToNewsReadComponent">
+                Go Detail
+            </button>
+          </div>
+          <div class="card-footer text-muted">
+            @news[i].Date
+          </div>
+        </div>
+    }
+
+
+
+@code {
+    private TblAgoraNewsMaster[] news;
+
+    protected override async Task OnInitializedAsync()
+    {    
+        news = await NewsService.GetNewsAsync();
+    }
+    protected MarkupString markupConverter(string target)
+    {
+        MarkupString markup = (MarkupString)target;
+        return markup;
+    }
+    private void NavigateToNewsWriteComponent()
+    {
+        navigationManager.NavigateTo("newswrite");
+    }
+    private void NavigateToNewsReadComponent()
+    {
+        navigationManager.NavigateTo("newsread");
+    }
+}
